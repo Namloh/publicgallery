@@ -1,0 +1,241 @@
+﻿@page
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>HIJACKING THIS TO BE A PERSONS GALLERY</p>
+<div class="containerus">
+  <p class="draggable" draggable="true">1</p>
+  <p class="draggable" draggable="true">2</p>
+   <p class="draggable" draggable="true">3</p>
+  <p class="draggable" draggable="true">4</p>
+   <p class="draggable" draggable="true">5</p>
+  <p class="draggable" draggable="true">6</p>
+   <p class="draggable" draggable="true">7</p>
+  <p class="draggable" draggable="true">8</p>
+</div>
+
+@if (Model.SignedIn)
+{
+@if (Model.Galleries.Count > 0)
+{
+    @foreach (var g in Model.Galleries)
+                    {
+                        <h2>@g.GalleryName</h2>
+                        <table class="table table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th>Preview</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Uploader</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                    @if(g.Images.Count > 0)
+                    {
+                        
+                    
+                    @foreach (var i in g.Images)
+            {
+                
+
+                <tr>
+                    @if (i.ThumbnailId != null)
+                    {
+                        
+                        <td><img src="@Url.Page("/Privacy","Thumbnail",new {filename=i.ThumbnailId })" /></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <td>@i.OriginalName</td>
+                    <td>@i.ContentType</td>
+                    <td>@i.Uploader.UserName</td>
+                    <td>@i.UploadedAt</td>
+                    @if(i.IsPublic){
+                        <td>Public</td>
+                    }
+                    else{
+                        <td>Private</td>
+                    }
+                    
+                    <td>
+                        @if(i.IsPublic){
+                       <a class="btn btn-sm btn-warning" asp-page-handler="Visibility" asp-route-filename="@i.Id">Make Private</a>
+                        }
+                        else{
+                            <a class="btn btn-sm btn-danger" asp-page-handler="Visibility" asp-route-filename="@i.Id">Make Public</a>
+                        }
+                        <a class="btn btn-sm btn-primary" asp-page-handler="download" asp-route-filename="@i.Id">Download</a>
+                        
+                        @if (i.ThumbnailId != null)
+                        {
+                            <a class="btn btn-sm btn-secondary" asp-page-handler="thumbnail" asp-route-filename="@i.ThumbnailId">Thumbnail</a>
+                        }
+                         <a class="btn btn-sm btn-danger" asp-page-handler="delete" asp-route-filename="@i.Id">Delete</a>
+                    </td>
+                </tr>
+                        }
+                    }
+                    else
+                    {
+                         <p>There are no files uploaded yet.</p>
+                    }
+
+        </tbody>
+    </table>
+    <div style="margin-bottom: 100px;">
+         <a class="btn btn-sm btn-primary" asp-page="./Upload" asp-page-handler="Gallery" asp-route-id="@g.GalleryId" >Upload to this gallery</a>
+          @if(g.IsPublic){
+                    <a class="btn btn-sm btn-warning" asp-page="./Privacy" asp-page-handler="GalleryVisibility" asp-route-galleryId="@g.GalleryId" >Make this gallery private</a>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-danger" asp-page="./Privacy" asp-page-handler="GalleryVisibility" asp-route-galleryId="@g.GalleryId" >Make this gallery public</a>
+                }
+            </div>
+    
+                    }
+        
+}
+else
+{
+    <p>There are no files uploaded yet.</p>
+}
+
+<form method="post" >
+          <div>
+            <label for="GalleryTitle">Gallery Title:</label>
+            <input type="text" name="GalleryName" value="" asp-for="Gallery.GalleryName"/>
+          </div>
+          <div>
+            <label for="BckColor">Background Color:</label>
+           <input type="color" name="GalleryBackgroundColor" value="#ff0000" asp-for="Gallery.GalleryBackgroundColor">
+          </div>
+          <div>
+            <input type="submit" value="Submit" class="submit" asp-page-handler="NewGallery"/>
+          </div>
+      </form>
+}
+else
+{
+    <p>U CANT BE HERE MOFOOO</p>
+}
+
+<div class="gallery-container">
+  <div class="box">
+    <img src="https://source.unsplash.com/1000x800">
+    <span>CSS</span>
+  </div>
+  <div class="box">
+    <img src="https://source.unsplash.com/1000x802">
+    <span>Image</span>
+  </div>
+  <div class="box">
+    <img src="https://source.unsplash.com/1000x804">
+    <span>Hover</span>
+  </div>
+  <div class="box">
+    <img src="https://source.unsplash.com/1000x806">
+    <span>Effect</span>
+  </div>
+</div>
+
+
+
+@if (Model.SignedIn)
+{
+@if (Model.Galleries.Count > 0)
+{
+    @foreach (var g in Model.Galleries)
+                    {
+            <h2>@g.GalleryName</h2>
+            <section id="list" class="gallery">
+                    @if(g.Images.Count > 0)
+                    {
+                        @foreach (var i in g.Images)
+                        {
+                            
+                            <div id='div1' class='divCard'>
+                                <div class='inside'>
+                                <img draggable="false" src="@Url.Page("/Privacy","Thumbnail",new {filename=i.ThumbnailId })" />
+                                <p>Name: @i.OriginalName</p>
+                                 <p>Type: @i.ContentType</p>
+                                  <p>Uploader: @i.Uploader</p>
+                                   <p>Date: @i.UploadedAt</p>
+                                    @if (i.IsPublic)
+                                    {
+                                        <p>Status: Public</p>
+                                        <a class="btn btn-sm btn-warning" asp-page-handler="Visibility" asp-route-filename="@i.Id">Make Private</a>
+                        
+                                    }
+                                    else
+                                    {
+                                        <p>Status: Private</p>
+                                        <a class="btn btn-sm btn-danger" asp-page-handler="Visibility" asp-route-filename="@i.Id">Make Public</a>
+                      
+                                    }
+                                     @if (i.ThumbnailId != null)
+                                        {
+                                            <a class="btn btn-sm btn-secondary" asp-page-handler="thumbnail" asp-route-filename="@i.ThumbnailId">Thumbnail</a>
+                                        }
+                                    <a class="btn btn-sm btn-primary" asp-page-handler="download" asp-route-filename="@i.Id">Download</a>
+                                    <a class="btn btn-sm btn-danger" asp-page-handler="delete" asp-route-filename="@i.Id">Delete</a>
+
+                            </div>
+                            </div>
+                        }
+                            
+                       
+                        }
+                    
+                    else
+                    {
+                         <p>There are no files uploaded yet.</p>
+                    }
+                  </section>
+
+    <div style="margin-bottom: 100px;">
+         <a class="btn btn-sm btn-primary" asp-page="./Upload" asp-page-handler="Gallery" asp-route-id="@g.GalleryId" >Upload to this gallery</a>
+          @if(g.IsPublic){
+                    <a class="btn btn-sm btn-warning" asp-page="./Privacy" asp-page-handler="GalleryVisibility" asp-route-galleryId="@g.GalleryId" >Make this gallery private</a>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-danger" asp-page="./Privacy" asp-page-handler="GalleryVisibility" asp-route-galleryId="@g.GalleryId" >Make this gallery public</a>
+                }
+            </div>
+    
+                    }
+        
+}
+else
+{
+    <p>There are no files uploaded yet.</p>
+}
+
+<form method="post" >
+          <div>
+            <label for="GalleryTitle">Gallery Title:</label>
+            <input type="text" name="GalleryName" value="" asp-for="Gallery.GalleryName"/>
+          </div>
+          <div>
+            <label for="BckColor">Background Color:</label>
+           <input type="color" name="GalleryBackgroundColor" value="#ff0000" asp-for="Gallery.GalleryBackgroundColor">
+          </div>
+          <div>
+            <input type="submit" value="Submit" class="submit" asp-page-handler="NewGallery"/>
+          </div>
+      </form>
+}
+else
+{
+    <p>U CANT BE HERE MOFOOO</p>
+}

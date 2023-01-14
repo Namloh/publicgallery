@@ -1,0 +1,82 @@
+﻿@page
+@model galerie.Pages.PublicGalleriesModel
+@{
+}
+<h1>List of All Public Galleries from All Users</h1>
+
+
+@if (Model.Galleries.Count > 0)
+{
+    @foreach (var g in Model.Galleries)
+                    {
+                        <h2><strong>@g.GalleryName</strong></h2>
+                        <h2>Owner: @g.User.UserName</h2>
+            <table class="table table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th>Preview</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Uploader</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                    @if(g.Images.Count > 0)
+                    {
+                        
+                    
+                    @foreach (var i in g.Images)
+            {
+                <tr>
+                    @if (i.ThumbnailId != null)
+                    {
+                        
+                        <td><img src="@Url.Page("/Privacy","Thumbnail",new {filename=i.ThumbnailId })" /></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <td>@i.OriginalName</td>
+                    <td>@i.ContentType</td>
+                    <td>@i.Uploader.UserName</td>
+                    <td>@i.UploadedAt</td>
+                    @if(i.IsPublic){
+                        <td>Public</td>
+                    }
+                    else{
+                        <td>Private</td>
+                    }
+                    
+                    <td>
+                        
+                        <a class="btn btn-sm btn-primary" asp-page-handler="download" asp-route-filename="@i.Id">Download</a>
+                        
+                        @if (i.ThumbnailId != null)
+                        {
+                            <a class="btn btn-sm btn-secondary" asp-page-handler="thumbnail" asp-route-filename="@i.ThumbnailId">Thumbnail</a>
+                        }
+                         
+                    </td>
+                </tr>
+            }  
+            }
+            else
+                    {
+                         <p>There are no files uploaded yet.</p>
+                    }
+
+        </tbody>
+    </table>
+   
+    
+                    }
+        
+}
+else
+{
+    <p>There are no files uploaded yet.</p>
+}

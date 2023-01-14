@@ -1,0 +1,159 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+
+
+.gallery-container {
+    display: flex;
+    width: 100%;
+    padding: 4% 2%;
+    box-sizing: border-box;
+    height: 100vh;
+}
+
+.box {
+    flex: 1;
+    overflow: hidden;
+    transition: .5s;
+    margin: 0 2%;
+    box-shadow: 0 20px 30px rgba(0,0,0,.1);
+    line-height: 0;
+}
+
+    .box > img {
+        width: 200%;
+        height: calc(100% - 10vh);
+        object-fit: cover;
+        transition: .5s;
+    }
+
+    .box > span {
+        font-size: 3.8vh;
+        display: block;
+        text-align: center;
+        height: 10vh;
+        line-height: 2.6;
+    }
+
+    .box:hover {
+        flex: 1 1 50%;
+    }
+
+        .box:hover > img {
+            width: 100%;
+            height: 100%;
+        }
+
+
+
+
+section {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    display: grid;
+    grid-gap: 15px;
+    grid-template-rows: repeat(auto, 250px);
+    grid-template-columns: repeat(4, 1fr);
+    /*   grid-template-columns: repeat(auto-fit, minmax(300px, 300px));
+  grid-template-rows: repeat(5, 200px); */
+    grid-auto-flow: row dense;
+    /*min-height: 100vh;*/
+}
+
+.inside {
+    background-color: #fff;
+}
+
+.divRec {
+    cursor: move;
+    padding: 35px 20px;
+    font-size: 20px;
+    background-color: #ff0000;
+    grid-area: span 1/span 2;
+}
+
+.divQuad {
+    cursor: move;
+    padding: 35px 20px;
+    font-size: 20px;
+    background-color: #fff333;
+    grid-area: span 1/span 1;
+}
+
+.divCard {
+    cursor: move;
+    padding: 35px 20px;
+    font-size: 20px;
+    background-color: #00ff00;
+    grid-area: span 2/span 1;
+    min-height: 250px;
+}
+
+.ghost {
+    border: 1px dashed #000;
+    background-color: #fff;
+    opacity:0.1;
+}
+
+.custom-drag-ghost {
+    /* The original cloned element must not take place up in the page and must not be visible */
+    position: absolute;
+    top: -99999px;
+    left: -99999px;
+    /* Just for appearance */
+    background-color: #edb458;
+    border: 1px solid #e8871e;
+}
+
+.hidden-drag-ghost {
+    opacity: 0;
+}
+
+.transition {
+    transition: all 2s ease-out .5s;
+    top: 0;
+}
+
+
+
+.containerus {
+    background-color: #333;
+    padding: 1rem;
+    margin-top: 1rem;
+    display: grid;
+    grid-gap: 15px;
+    grid-template-rows: repeat(auto, 250px);
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.draggable {
+    padding: 1rem;
+    background-color: white;
+    border: 1px solid black;
+    cursor: move;
+}
+
+    .draggable.dragging {
+        opacity: .5;
+    }
+
