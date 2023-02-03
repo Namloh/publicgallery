@@ -2,81 +2,53 @@
 @model galerie.Pages.PublicGalleriesModel
 @{
 }
-<h1>List of All Public Galleries from All Users</h1>
+<h1 class="PageHeader">List of All Public Galleries from All Users</h1>
 
-
+ <div class="galleryflex">
 @if (Model.Galleries.Count > 0)
 {
-    @foreach (var g in Model.Galleries)
+    @foreach(var g in Model.Galleries)
+{
+                   
+        <div class="galitem" style="border-color: @g.GalleryBackgroundColor">
+            <div class="karta">
+                   @if(g.Images.Count != 0)
                     {
-                        <h2><strong>@g.GalleryName</strong></h2>
-                        <h2>Owner: @g.User.UserName</h2>
-            <table class="table table-striped table-responsive">
-            <thead>
-                <tr>
-                    <th>Preview</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Uploader</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                    @if(g.Images.Count > 0)
-                    {
-                        
-                    
-                    @foreach (var i in g.Images)
-            {
-                <tr>
-                    @if (i.ThumbnailId != null)
-                    {
-                        
-                        <td><img src="@Url.Page("/Privacy","Thumbnail",new {filename=i.ThumbnailId })" /></td>
+                        <img class="card-img-top" src="@Url.Page("/Privacy","Thumbnail",new {filename=g.Images[0].ThumbnailId })" alt="joe" draggable="false"/>
                     }
                     else
                     {
-                        <td></td>
+                        <img class="card-img-top" src="https://source.unsplash.com/400x400" alt="joe" draggable="false"/>
                     }
-                    <td>@i.OriginalName</td>
-                    <td>@i.ContentType</td>
-                    <td>@i.Uploader.UserName</td>
-                    <td>@i.UploadedAt</td>
-                    @if(i.IsPublic){
-                        <td>Public</td>
-                    }
-                    else{
-                        <td>Private</td>
-                    }
-                    
-                    <td>
-                        
-                        <a class="btn btn-sm btn-primary" asp-page-handler="download" asp-route-filename="@i.Id">Download</a>
-                        
-                        @if (i.ThumbnailId != null)
-                        {
-                            <a class="btn btn-sm btn-secondary" asp-page-handler="thumbnail" asp-route-filename="@i.ThumbnailId">Thumbnail</a>
-                        }
-                         
-                    </td>
-                </tr>
-            }  
-            }
-            else
+                        <div class="karta-body">
+                        <p class="galleryTitle">@g.GalleryName</p>
+                    @if (g.IsPublic)
                     {
-                         <p>There are no files uploaded yet.</p>
+                        <p>Status: Public</p>
+                    }
+                    else
+                    {
+                         <p>Status: Private</p>
+                    }
+                    @if(g.Images.Count != 0)
+                    {
+                        <p>Number of images: @g.Images.Count</p>
+                        <p>Last updated: @g.Images[0].UploadedAt </p>
+                    }
+                    else
+                    {
+                         <p>Number of images: 0</p>
+                         <p>Last updated: never... </p>
                     }
 
-        </tbody>
-    </table>
-   
-    
-                    }
+                 <a asp-page="./Gallery" asp-route-galleryId="@g.GalleryId" asp-page-handler="Public"><button title="Open" class="buton open"><i class="fa fa-folder"></i></button></a>
+                  </div>
+            </div>
+        </div> 
+       
+            
+
+}
         
 }
-else
-{
-    <p>There are no files uploaded yet.</p>
-}
+</div>

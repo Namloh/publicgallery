@@ -29,6 +29,10 @@ namespace galerie.Pages
                    .Include(u => u.User)
                    .Where(g => g.IsPublic == true)
                    .ToList();
+            if(Galleries.Count == 0)
+            {
+                ErrorMessage = "There are no public galleries.";
+            }
         }
         public async Task<IActionResult> OnGetThumbnail(string filename, ThumbnailType type = ThumbnailType.Square)
         {

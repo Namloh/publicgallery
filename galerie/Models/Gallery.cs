@@ -10,13 +10,13 @@ namespace galerie.Models
         public int GalleryId { get; set; }
         public string GalleryName { get; set; } = "Your First Gallery";
 
-        public string GalleryBackgroundColor { get; set; } = "#FFFFFF";
+        public string GalleryBackgroundColor { get; set; } = "rgb(34, 42, 54)";
         public bool IsPublic { get; set; } // je verejna?
         public string UserId { get; set; }
         [Required]
         public User User { get; set; }
 
-        public ICollection<StoredFile> Images { get; set; } = new List<StoredFile>();
+        public List<StoredFile> Images { get; set; } = new List<StoredFile>();
         
     }
 }

@@ -15,7 +15,7 @@ namespace galerie.Data
         }
         
         public DbSet<StoredFile> Files { get; set; }
-        public DbSet<User> User { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Gallery> Galleries { get; set; }
         public DbSet<ThumbnailBlob> Thumbnails { get; set; }
 

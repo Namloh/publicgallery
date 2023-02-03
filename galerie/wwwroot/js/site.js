@@ -139,3 +139,25 @@ function getDragAfterElement(container, y,x) {
         }
     }, { offsetY: Number.NEGATIVE_INFINITY, offsetX: Number.NEGATIVE_INFINITY }).element
 }
+
+var fileInput = document.getElementById("file");
+var inputtext = document.getElementById("input-text");
+var upinput = document.getElementById("inputbtn");
+
+fileInput.addEventListener("input", function () {
+    if (fileInput.files.length != 0) {
+        console.log(upinput)
+        if (fileInput.files[0].type != "image/png") {
+            inputtext.innerText = "Not an image!"
+            upinput.disabled = true;
+            upinput.style.cursor = "not-allowed";
+        }
+        else {
+            inputtext.innerText = "File selected!"
+            upinput.disabled = false;
+            upinput.style.cursor = "pointer";
+        }
+        
+    }
+    console.log(fileInput.files)
+})

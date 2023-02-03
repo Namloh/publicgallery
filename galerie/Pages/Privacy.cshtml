@@ -1,11 +1,76 @@
 ﻿@page
 @model PrivacyModel
 @{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Your Galleries";
 }
-<h1>@ViewData["Title"]</h1>
+<h1 class="PageHeader">@ViewData["Title"]</h1>
 
-<p>HIJACKING THIS TO BE A PERSONS GALLERY</p>
+
+ <div class="galleryflex">
+@foreach(var g in Model.Galleries)
+{
+                   
+        <div class="galitem" style="border-color: @g.GalleryBackgroundColor">
+            <div class="karta">
+                   @if(g.Images.Count != 0)
+                    {
+                        <img class="card-img-top" src="@Url.Page("/Privacy","Thumbnail",new {filename=g.Images[0].ThumbnailId })" alt="joe" draggable="false"/>
+                    }
+                    else
+                    {
+                        <img class="card-img-top" src="https://source.unsplash.com/400x400" alt="joe" draggable="false"/>
+                    }
+                        <div class="karta-body">
+                        <p class="galleryTitle">@g.GalleryName</p>
+                    @if (g.IsPublic)
+                    {
+                        <p>Status: Public</p>
+                    }
+                    else
+                    {
+                         <p>Status: Private</p>
+                    }
+                    @if(g.Images.Count != 0)
+                    {
+                        <p>Number of images: @g.Images.Count</p>
+                        <p>Last updated: @g.Images[0].UploadedAt </p>
+                    }
+                    else
+                    {
+                         <p>Number of images: 0</p>
+                         <p>Last updated: never... </p>
+                    }
+                   
+                    
+                      <a asp-page="./Privacy" asp-page-handler="DeleteGallery" asp-route-galleryId="@g.GalleryId"><button title="Delete" class="buton delete"><i class="fa fa-trash"></i></button></a>
+                     
+                 @if(g.IsPublic){
+                    <a asp-page="./Privacy" asp-page-handler="GalleryVisibility" asp-route-galleryId="@g.GalleryId" ><button title="Make Private" class="buton visibility"><i class="fa fa-regular fa-eye-slash"></i></button></a>
+                }
+                else
+                {
+                    <a asp-page="./Privacy" asp-page-handler="GalleryVisibility" asp-route-galleryId="@g.GalleryId" ><button title="Make Public" class="buton visibility"><i class="fa fa-regular fa-eye"></i></button></a>
+                }
+                 <a asp-page="./Gallery" asp-route-galleryId="@g.GalleryId"><button title="Open" class="buton open"><i class="fa fa-folder"></i></button></a>
+                  </div>
+            </div>
+        </div> 
+       
+            
+
+}
+</div>
+
+<div class="content-middle">
+<a asp-page="./Upload" asp-page-handler="NewGallery" ><button title="Add Gallery" class="buton add"><i class="fa fa-solid fa-plus"></i></button></a>   
+    </div>
+
+
+
+
+
+
+
 <div class="containerus">
   <p class="draggable" draggable="true">1</p>
   <p class="draggable" draggable="true">2</p>

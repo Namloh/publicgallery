@@ -1,0 +1,5 @@
+﻿@page
+@model galerie.Pages.ImageModel
+@{
+}
+<img src="@Url.Page("/Image","File", new {id = Model.Input.Id })" />

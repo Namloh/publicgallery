@@ -7,25 +7,59 @@
 {
     <div class="alert alert-dark" role="alert">@Model.NotLoggedInMessage</div>
 }
-<h1>New file upload</h1>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label asp-for="Upload" class="control-label">File</label>
-                <input type="file" asp-for="Upload" class="form-control-file" multiple required />
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Upload" class="btn btn-primary" />
-                <a class="btn btn-secondary" asp-page="/Index">Back</a>
-            </div>
-            <div class="form-check" >
+@if(Model.Gallery != null)
+{
+
+    <div class="file-upload">
+   
+        <div class="hlava">
+<h1 class="PageHeader">New file upload</h1> 
+ <a asp-page="./Gallery" asp-route-galleryId="@Model.Gallery.GalleryId" ><button title="Go back to gallery" class="buton delete"><i class="fa fa-solid fa-arrow-left"></i></button></a>
+</div>
+
+    
+  <DIV id="dropzone">
+    <FORM method="post" class="dropzone needsclick" id="demo-upload" enctype="multipart/form-data">
+         <label id="input-text" asp-for="Upload" class="control-label">Click here to upload an image!</label>
+              <input type="file" asp-for="Upload" id="file" class="upload-button" required />
+               <div class="form-check" >
                 @Html.CheckBoxFor(x => x.CheckedDeafault)
-  <label class="form-check-label" for="flexCheckDefault" name="CheckedDefault" asp-for="CheckedDeafault">
-    IS THE FILE GONNA BE DEFAULT TO ALL USERS?
+  <label class="form-check-label" for="flexCheckDeafault" name="CheckedDeafault" asp-for="CheckedDeafault">
+    <strong>Default image (ADMIN ONLY)</strong>
   </label>
+  <div class="form-group">
+  <button title="Upload image" id="inputbtn" class="buton download"><i class="fa fa-solid fa-upload"></i><input id="upinput" type="submit" value="Upload" /></button>
+ </div>
 </div>
-        </form>
-    </div>
+    </FORM>
+  </DIV>
+   </div>
+    
+ 
+
+    
+}
+else
+{
+    <div class="gallery-upload">
+                <div class="hlava">
+<h1 class="PageHeader">Add new gallery</h1> 
+ <a asp-page="./Privacy"  ><button title="Go back to Your Galleries" class="buton delete"><i class="fa fa-solid fa-arrow-left"></i></button></a>
 </div>
+
+    <form method="post" >
+          <div>
+            <label  for="GalleryTitle">Gallery Title</label>
+            <input  type="text" name="GalleryName" value="" asp-for="Gallery.GalleryName" required/>
+          </div>
+          <div>
+            <label for="BckColor">Border Color</label>
+           <input class="color-input" type="color" name="GalleryBackgroundColor" value="rgb(34, 42, 54)" asp-for="Gallery.GalleryBackgroundColor">
+          </div>
+          <div>
+
+            <button title="Add gallery" id="gallery-submit" asp-page-handler="NewGallery" class="buton open"><i class="fa fa-solid fa-check"></i><input id="upinput" type="submit" value="" /></button>
+          </div>
+      </form>
+      </div>
+}

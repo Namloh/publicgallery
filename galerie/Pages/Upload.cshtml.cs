@@ -24,9 +24,12 @@ namespace galerie.Pages
 
         private int _squareSize;
         private int _sameAspectRatioHeight;
-        private int _size = 300;
+        private int _size = 400;
 
 
+        public bool SignedIn { get; set; }
+        [BindProperty]
+        public Gallery Gallery { get; set; }
         [TempData]
         public string SuccessMessage { get; set; }
         [TempData]
@@ -35,8 +38,7 @@ namespace galerie.Pages
         [BindProperty]
         public bool CheckedDeafault { get; set; }
         public IFormFile Upload { get; set; }
-        [BindProperty(SupportsGet = true)]
-        public int? GalId { get; set; }
+        
 
         public UploadModel(IWebHostEnvironment environment, ApplicationDbContext context, IConfiguration configuration)
         {
@@ -48,10 +50,51 @@ namespace galerie.Pages
         }
 
 
-        //ASI USELESS!!!
-        public void OnGet(int? id)
+
+        public IActionResult OnGetGallery(int id)
         {
-            GalId = id;
+            SignedIn = User.Identity.IsAuthenticated;
+            if (SignedIn)
+            {
+
+               Gallery = _context.Galleries.Find(id);
+
+
+
+                return Page();
+            }
+            else
+            {
+                NotLoggedInMessage = "You must have an account to access your gallery. Please log in or register to continue.";
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+        }
+        public IActionResult OnGetNewGallery()
+        {
+            SignedIn = User.Identity.IsAuthenticated;
+            if (SignedIn)
+            {
+                return Page();
+            }
+            else
+            {
+                NotLoggedInMessage = "You must have an account to access your gallery. Please log in or register to continue.";
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+        }
+        public async Task<IActionResult> OnPostNewGallery()
+        {
+            var userId = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
+            Gallery = new Gallery { GalleryBackgroundColor = Gallery.GalleryBackgroundColor, GalleryName = Gallery.GalleryName, UserId = userId };
+            if (Gallery.GalleryName == "Your First Gallery")
+            {
+                ErrorMessage = "Choose a different name...";
+                return RedirectToPage();
+            }
+            _context.Galleries.Add(Gallery);
+            await _context.SaveChangesAsync();
+            SuccessMessage = "Gallery added succesfully";
+            return RedirectToPage("/Privacy");
         }
         public async Task<IActionResult> OnPost()
         {
@@ -85,9 +128,16 @@ namespace galerie.Pages
                 MemoryStream oms = new MemoryStream();
                 Upload.CopyTo(ims);
                 IImageFormat format;
+                
                 Image image = Image.Load(ims.ToArray(), out format);
                 
                     int largestSize = Math.Max(image.Height, image.Width);
+
+                    if(image.Width > 3840 && image.Height > 2160 || (image.Height > 3840 && image.Width > 2160 )) 
+                {
+                    ErrorMessage = "MOC VELKY!";
+                    return RedirectToPage("/Upload"); 
+                }
                     if (image.Width > image.Height)
                     {
                         image.Mutate(x => x.Resize(0, _size));
@@ -105,6 +155,11 @@ namespace galerie.Pages
                     Id = newId,
                     Blob = oms.ToArray()
                 };
+            }
+            else
+            {
+                ErrorMessage = "neni obrazek!";
+                return RedirectToPage("/Upload");
             }
 
             try
@@ -138,7 +193,7 @@ namespace galerie.Pages
                 ErrorMessage = "File upload failed miserably. ;(";
                 
             }
-            return RedirectToPage("/Privacy");
+            return RedirectToPage("/Gallery", new { galleryId = id});
         }
        
 

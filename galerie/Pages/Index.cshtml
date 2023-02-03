@@ -4,7 +4,57 @@
     ViewData["Title"] = "Home page";
 }
 
-<h1>Top 12 Newest Public Images From All Users</h1>
+        <section id="hero">
+            <div class="container">
+                <div class="d-flex flex-column flex-column-reverse flex-md-row">
+                    <div class="col col-md-5 me-md-5">
+                        <h1 class="main-text">Welcome to <u>Gollo</u>!</h1>
+                        <p class="submain-text">
+                           The biggest most, fine tuned gallery website in the multiverse. Feel free to explore our mighty lands as you please.
+                        </p>
+                    </div>
+                    <div class="col col-md-7">
+                        <div>
+                            <img class="img-fluid rounded mb-4 mb-md-0" src="https://freebiespic.com/images/2019/0502_background-carpenter-long-nails-1024x604.jpg" alt="main-image" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+          <div class="container">
+
+                <h2 class="top-12">Explore The Top 12 Newest Public Images From All Users</h2>
+
+                <div class="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3">
+                    @foreach (var f in Model.Files)
+                    {
+
+            
+                    @if (f.ThumbnailId != null)
+                    {
+                        <div class="col">
+                        <div class="card bg-dark border-0">
+                            <img class="card-img-top" src="@Url.Page("/Index","Thumbnail",new {filename=f.ThumbnailId })" alt="joe" />
+                            <div class="card-body">
+                                    <p class="fs-5">Gallery Name: @f.Gallery.GalleryName </p>
+                                    <p class="fs-5">Image Name: @f.OriginalName </p>
+                                    <p class="fs-5">Type: @f.ContentType </p>
+                                    <p class="fs-5">Uploader: @f.Uploader.UserName </p>
+                                    <p class="fs-5">Date: @f.UploadedAt </p>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    }
+
+                </div>
+
+            </div>
+
+
+
 
 @if (Model.Files.Count > 0)
 {

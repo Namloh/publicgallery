@@ -13,7 +13,6 @@ namespace galerie.Pages
         private readonly ILogger<PrivacyModel> _logger;
         private ApplicationDbContext _context;
         public ICollection<StoredFile> Files { get; set; }
-
         public List<Gallery> Galleries { get; set; }
         [BindProperty]
         public Gallery Gallery { get; set; }
@@ -40,14 +39,16 @@ namespace galerie.Pages
                 var userId = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
                
                 Files = _context.Files.AsNoTracking().Include(f => f.Uploader).Include(f => f.Thumbnail).ToList();
-                Galleries = _context.Galleries.AsNoTracking()
-                    .Include(i => i.Images).ThenInclude(u => u.Uploader)
+                Galleries = _context.Galleries.AsNoTracking().OrderByDescending(g => g.Images.OrderByDescending(i => i.UploadedAt).First().UploadedAt)
+                    .Include(i => i.Images.OrderByDescending(f => f.UploadedAt)).ThenInclude(u => u.Uploader)
                     .Include(u => u.User)
                     .Where(u => u.UserId == userId)
                     .ToList();
+
                 
-               
-                foreach(var g in Galleries)
+                
+
+                foreach (var g in Galleries)
                 {
                     if(g.GalleryName == "Your First gallery")
                     {
@@ -59,6 +60,7 @@ namespace galerie.Pages
                             }
                         }
                     }
+
                 }
                 return Page();
             }
@@ -133,6 +135,7 @@ namespace galerie.Pages
                     gal.IsPublic = true;
                 }
                 await _context.SaveChangesAsync();
+                SuccessMessage = "Gallery visibility changed succesfully";
                 return RedirectToPage();
             }
             return NotFound("no record for this file");
@@ -173,6 +176,7 @@ namespace galerie.Pages
                     _context.Files.Remove(fileRecord);
                     System.IO.File.Delete(fullName);
                     await _context.SaveChangesAsync();
+                    SuccessMessage = "Image deleted succesfully";
                     return RedirectToPage();
                     // vrať ho zpátky pod původním názvem a typem
                 }
@@ -188,11 +192,61 @@ namespace galerie.Pages
                 return RedirectToPage();
             }
         }
+        public async Task<IActionResult> OnGetDeleteGallery(int galleryId)
+        {
+            Gallery = _context.Galleries.Include(i => i.Images).Where(g => g.GalleryId == galleryId).FirstOrDefault();
+            if (Gallery == null)
+            {
+                ErrorMessage = "This gallery doesn't exist anymore";
+                return RedirectToPage();
+            }
+            else if(Gallery.GalleryName == "Your First Gallery"){
+                ErrorMessage = "You can't delete your default gallery";
+                return RedirectToPage();
+            }
+            else
+            {
+                foreach(var i in Gallery.Images)
+                {
+                    var fullName = Path.Combine(_environment.ContentRootPath, "Uploads", i.Id.ToString());
+                    if (System.IO.File.Exists(fullName)) // existuje soubor na disku?
+                    {
+                        var fileRecord = _context.Files.Find(Guid.Parse(i.Id.ToString()));
+                        if (fileRecord != null) // je soubor v databázi?
+                        {
+                            _context.Files.Remove(fileRecord);
+                            System.IO.File.Delete(fullName);
+
+                        }
+                        else
+                        {
+                            ErrorMessage = "There is no record of such file.";
+                            return RedirectToPage();
+                        }
+                    }
+                    else
+                    {
+                        ErrorMessage = "There is no such file.";
+                        return RedirectToPage();
+                    }
+                }
+                _context.Galleries.Remove(Gallery);
+                await _context.SaveChangesAsync();
+                SuccessMessage = "Gallery deleted succesfully";
+                return RedirectToPage();
+            }
+            
+        }
 
         public async Task<IActionResult> OnPostNewGallery()
         {
             var userId = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
             Gallery = new Gallery { GalleryBackgroundColor = Gallery.GalleryBackgroundColor, GalleryName = Gallery.GalleryName, UserId = userId};
+            if(Gallery.GalleryName == "Your First Gallery")
+            {
+                ErrorMessage = "Choose a different name...";
+                return RedirectToPage();
+            }
             _context.Galleries.Add(Gallery);
             await _context.SaveChangesAsync();
             return RedirectToPage();
