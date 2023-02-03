@@ -30,6 +30,7 @@ namespace galerie.Pages
         public void OnGet()
         {
             Files = _context.Files.AsNoTracking().Where(f => f.IsPublic).OrderByDescending(f => f.UploadedAt).Take(12).Include(f => f.Uploader).Include(f => f.Thumbnail).Include(g => g.Gallery).ToList();
+            ErrorMessage = null;
         }
         public async Task<IActionResult> OnGetThumbnail(string filename, ThumbnailType type = ThumbnailType.Square)
         {
