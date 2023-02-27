@@ -4,7 +4,7 @@ using galerie.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-
+using galerie.Services;
 using System.Security.Claims;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
@@ -13,23 +13,33 @@ using Image = SixLabors.ImageSharp.Image;
 using System.Drawing.Imaging;
 using System.Text;
 using ExifLib;
+using Microsoft.AspNetCore.Authorization;
+using tusdotnet.Models;
+using tusdotnet.Stores;
+using tusdotnet.Interfaces;
+using tusdotnet.Models.Configuration;
 
 namespace galerie.Pages
 {
+    [Authorize]
     public class UploadModel : PageModel
     {
         private IWebHostEnvironment _environment;
         private IConfiguration _configuration;
         private ApplicationDbContext _context;
-
+        private FileStorageManager _tus;
+        private readonly IAuthorizationService _authorizationService;
         private int _squareSize;
         private int _sameAspectRatioHeight;
         private int _size = 400;
 
-
+        public string UserId { get; set; }
         public bool SignedIn { get; set; }
+        public bool IsAdmin { get; set; }
         [BindProperty]
         public Gallery Gallery { get; set; }
+        [BindProperty]
+        public string FileDescription { get; set; }
         [TempData]
         public string SuccessMessage { get; set; }
         [TempData]
@@ -40,25 +50,32 @@ namespace galerie.Pages
         public IFormFile Upload { get; set; }
         
 
-        public UploadModel(IWebHostEnvironment environment, ApplicationDbContext context, IConfiguration configuration)
+        public UploadModel(IWebHostEnvironment environment, ApplicationDbContext context, IConfiguration configuration, IAuthorizationService authorizationService, FileStorageManager tus)
         {
+            _tus = tus;
             _environment = environment;
             _context = context;
             _configuration = configuration;
+            _authorizationService = authorizationService;
             if (Int32.TryParse(_configuration["Thumbnails:SquareSize"], out _squareSize) == false) _squareSize = 64; // získej data z konfigurave nebo použij 64
             if (Int32.TryParse(_configuration["Thumbnails:SameAspectRatioHeigth"], out _sameAspectRatioHeight) == false) _sameAspectRatioHeight = 128;
         }
 
 
 
-        public IActionResult OnGetGallery(int id)
+        public async Task<IActionResult> OnGetGallery(int id)
         {
             SignedIn = User.Identity.IsAuthenticated;
             if (SignedIn)
             {
-
-               Gallery = _context.Galleries.Find(id);
-
+                var isAdministrator = await _authorizationService.AuthorizeAsync(User, "Admin");
+                if (isAdministrator.Succeeded) 
+                { 
+                    IsAdmin = true;
+                }
+                Gallery = _context.Galleries.Find(id);  
+                var userId = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
+                UserId = userId;
 
 
                 return Page();
@@ -109,8 +126,8 @@ namespace galerie.Pages
                 return Page();
             }
             var userId = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
-            Guid newId = Guid.NewGuid();
-
+            return RedirectToPage("/Gallery", new { galleryId = id });
+            /*
             var fileRecord = new StoredFile
             {
                 Id = newId,
@@ -119,8 +136,10 @@ namespace galerie.Pages
                 UploadedAt = DateTime.Now,
                 ContentType = Upload.ContentType,
                 IsDefault = CheckedDeafault,
-                GalleryId = id
+                GalleryId = id,
+                Description = FileDescription
             };
+
             string extension = System.IO.Path.GetExtension(Upload.FileName);
             if (Upload.ContentType.StartsWith("image"))
             {
@@ -135,8 +154,8 @@ namespace galerie.Pages
 
                     if(image.Width > 3840 && image.Height > 2160 || (image.Height > 3840 && image.Width > 2160 )) 
                 {
-                    ErrorMessage = "MOC VELKY!";
-                    return RedirectToPage("/Upload"); 
+                    ErrorMessage = "Image too big!";
+                    return RedirectToPage("/Upload", "Gallery", new { id = id }); 
                 }
                     if (image.Width > image.Height)
                     {
@@ -158,45 +177,49 @@ namespace galerie.Pages
             }
             else
             {
-                ErrorMessage = "neni obrazek!";
-                return RedirectToPage("/Upload");
+                ErrorMessage = "File is not an image!";
+                return RedirectToPage("/Upload", "Gallery", new { id = id });
             }
 
             try
             {
-               
-                _context.Files.Add(fileRecord);
-                await _context.SaveChangesAsync();
-                var file = Path.Combine(_environment.ContentRootPath, "Uploads", fileRecord.Id.ToString());
-                /* ASI POOPOO !!!!!!!
-                using (ExifReader reader = new ExifReader(file))
+
+                 _context.Files.Add(fileRecord);
+                 await _context.SaveChangesAsync();
+                 var file = Path.Combine(_environment.ContentRootPath, "Uploads", fileRecord.Id.ToString());
+
+
+                 using (var fileStream = new FileStream(file, FileMode.Create))
+                 {
+
+                     await Upload.CopyToAsync(fileStream);
+                     SuccessMessage = "File was uploaded succesfully.";
+                 }
+                
+
+
+                var uploadPath = Path.Combine(_environment.ContentRootPath, "Uploads", fileRecord.Id.ToString());
+                var fsm = _tus;
+                using (var fileStream = new FileStream(uploadPath, FileMode.Create))
                 {
-                    // Extract the tag data using the ExifTags enumeration
-                    DateTime datePictureTaken;
-                    if (reader.GetTagValue<DateTime>(ExifTags.DateTimeDigitized, out datePictureTaken))
-                    {
-                        // Do whatever is required with the extracted information
-                        fileRecord.ExifDateTaken = datePictureTaken;
-                    }
-                }
-                */
-                using (var fileStream = new FileStream(file, FileMode.Create))
-                {
-                    
+                    await fsm.CreateAsync(fileRecord);
                     await Upload.CopyToAsync(fileStream);
                     SuccessMessage = "File was uploaded succesfully.";
                 }
+
             }
             catch (Exception ex)
             {
                 
-                ErrorMessage = "File upload failed miserably. ;(";
+                ErrorMessage = "File upload failed miserably ;(";
                 
             }
+            
             return RedirectToPage("/Gallery", new { galleryId = id});
+            */
         }
        
 
 
-    }
+        }
 }

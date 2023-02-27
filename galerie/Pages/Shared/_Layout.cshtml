@@ -12,26 +12,30 @@
 <body class="text-light">
 
      <header class="headerus">
-        <div class="container">
+
+            
             <div class="navbarus">
-                <a id="title">
+                <a id="title" asp-page="/Index">
                     Gollo
                 </a>
                 <ul class="navigace" style="scrollbar-width: thin">
-                    <li class="nav-item">
-                        <a class="nav-link text-white link-info" asp-page="/Index">Home</a>
-                    </li>
+                  
+                    <div class="gals">
+
                     <li class="nav-item">
                         <a class="nav-link text-white link-info" asp-page="/Privacy">Your Galleries</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white link-info" asp-page="/PublicGalleries">Public Galleries</a>
                     </li>                   
-                 <partial name="_LoginPartial" />
+                </div>
+              
+               
+                    <partial name="_LoginPartial" />
+
                 </ul>
-                 
             </div>
-        </div>
+
     </header>
     <div>
         @if (TempData["SuccessMessage"] != null)
@@ -54,7 +58,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - galerie - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2023 - Gollo - <a asp-area="" asp-page="/Index">Home</a>
         </div>
     </footer>
 

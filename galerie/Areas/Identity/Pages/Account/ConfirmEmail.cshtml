@@ -4,5 +4,12 @@
     ViewData["Title"] = "Confirm email";
 }
 
+<head >   <link rel="stylesheet" href="~/css/logins.css" asp-append-version="true" /></head>
+
 <h1>@ViewData["Title"]</h1>
 <partial name="_StatusMessage" model="Model.StatusMessage" />
+
+
+ <div>
+     <a asp-page="./Login" id="login-submit" class="btn btn-lg btn-primary" style="width: 30%;">Log in</a>
+</div>

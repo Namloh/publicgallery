@@ -1,0 +1,34 @@
+
+/*REGISTER ATD*/
+main {
+    text-align: center;
+    margin: 20px 40px auto 40px;
+}
+.regform{
+    row-gap: 60px;
+}
+#registerForm div {
+    margin-bottom: 20px;
+}
+#registerSubmit{
+    margin-top: 30px;
+}
+.form-control{
+    margin-bottom: 20px;
+}
+.boxes div{
+    justify-content: center;
+}
+
+
+@media only screen and (min-width: 750px) {
+    #registerForm div {
+        margin-bottom: 0;
+    }
+    .regform{
+        flex-direction: column;
+        align-content: center;
+        align-items: center;
+    }
+
+}

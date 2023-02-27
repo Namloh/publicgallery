@@ -2,36 +2,79 @@
 @model galerie.Pages.GalleryModel
 @{
 }
+
+<style>
+    .karta-body:hover{
+        cursor:grabbing;
+    }
+</style>
+
+
 <div class="hlava">
 <h1 class="PageHeader">@Model.Gallery.GalleryName</h1> 
+
+  
+
     @if (Model.Public)
     {
+                <a asp-page="./Gallery" asp-page-handler="Public" asp-route-sortOrder="@Model.GallerySort" asp-route-galleryId="@Model.Gallery.GalleryId"><button title="Sort by date uploaded" class="buton download"><i class="fa fa-solid fa-sort"></i></button></a>
          <a asp-page="./PublicGalleries" ><button title="Back to Public Galleries" class="buton delete"><i class="fa fa-solid fa-arrow-left"></i></button></a>
    
     }
     else
     {
-        <a asp-page="./Privacy" ><button title="Go to your galleries" class="buton delete"><i class="fa fa-solid fa-arrow-left"></i></button></a>
+                <a asp-page="./Gallery"  asp-route-sortOrder="@Model.GallerySort" asp-route-galleryId="@Model.Gallery.GalleryId"><button title="Sort by date uploaded" class="buton download"><i class="fa fa-solid fa-sort"></i></button></a>
+        <a asp-page="./Privacy" ><button title="Go to Your Galleries" class="buton delete"><i class="fa fa-solid fa-arrow-left"></i></button></a>
     }
+
+
     </div>
 
+  
+      
+       
 
-<div class="galleryflex">
+<div id="list" class="galleryflex">
+  
                     @foreach (var f in Model.Gallery.Images)
                     {
 
-            
-                    @if (f.ThumbnailId != null)
-                    {
-                        <div class="galitem" style="border-color: @Model.Gallery.GalleryBackgroundColor">
+            Model.Count++;
+            @if (f.ThumbnailId != null)
+            {
+                if (!(Model.Public && f.IsPublic == false))
+                {
+                    
+                
+                          <div id="@Model.Count" class="galitem" style="border-color: @Model.Gallery.GalleryBackgroundColor">
                         <div class="karta">
-                            <a asp-page="Image" asp-route-id="@f.Id">
-                                <img class="card-img-top" src="@Url.Page("/Index","Thumbnail",new {filename=f.ThumbnailId })" alt="joe" draggable="false"/>
+                    @if(Model.Public)
+                    {
+                        <a asp-page="Image" asp-route-id="@f.Id" asp-page-handler="Public" draggable="false">
+                                <img class="card-img-top" src="@Url.Page("/Index","Thumbnail",new {filename=f.ThumbnailId })" alt="@f.OriginalName" draggable="false"/>
+                        </a>
+                    }
+                    else
+                    {
+                         <a asp-page="Image" asp-route-id="@f.Id" draggable="false">
+                                <img class="card-img-top" src="@Url.Page("/Index","Thumbnail",new {filename=f.ThumbnailId })" alt="@f.OriginalName" draggable="false"/>
                             </a>
+                    }
+                   
                             <div class="karta-body">
+                        @if (!(f.Description == "")){
+                            <p >Description: <i>@f.Description</i>  </p>
+                        }
+                        else
+                        {
+                            <p >Description: <i>none</i> </p>
+                        }
+
+                        
                                     <p >Image Name: @f.OriginalName </p>
                                     <p >Type: @f.ContentType </p>
-                                    <p >Date: @f.UploadedAt </p>
+                                    <p >Date Uploaded: @f.UploadedAt </p>
+                                    <p >Date Taken: @f.ExifDateTaken </p>
                                      @if(f.IsPublic){
                                         <p>Status: Public</p>
                                         }
@@ -41,7 +84,7 @@
                         
                         @if (f.ThumbnailId != null)
                         {
-                            <a asp-page-handler="thumbnail" asp-route-filename="@f.ThumbnailId" asp-route-galleryId="@Model.Gallery.GalleryId"><button title="Show Image" class="buton thumbnail"><i class="fa fa-image"></i></button></a>
+                           <a asp-page="Image" asp-route-id="@f.Id"><button title="Show Image" class="buton thumbnail"><i class="fa fa-image"></i></button></a>
                         }
                             <a asp-page-handler="download" asp-route-filename="@f.Id" asp-route-galleryId="@Model.Gallery.GalleryId"><button title="Download" class="buton download"><i class="fa fa-solid fa-download"></i></button></a>
                         @if (Model.Public)
@@ -64,16 +107,19 @@
                     </div>
                     }
                     }
+              }
 
 </div> @*galleryflex*@
+ 
 
 
-
-
-
-<div class="content-middle">
+@if (!Model.Public)
+{
+  <div class="content-middle">
 <a asp-page="./Upload" asp-page-handler="Gallery" asp-route-id="@Model.Gallery.GalleryId" ><button title="Add Image" class="buton add"><i class="fa fa-solid fa-plus"></i></button></a>   
 </div>
+  
+}
 
 
 

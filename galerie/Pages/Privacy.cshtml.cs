@@ -1,5 +1,6 @@
 ﻿using galerie.Data;
 using galerie.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using System.Security.Claims;
 
 namespace galerie.Pages
 {
+    [Authorize]
     public class PrivacyModel : PageModel
     {
         private IWebHostEnvironment _environment;
@@ -46,22 +48,12 @@ namespace galerie.Pages
                     .ToList();
 
                 
-                
-
-                foreach (var g in Galleries)
+                if(Galleries.Count == 0)
                 {
-                    if(g.GalleryName == "Your First gallery")
-                    {
-                        foreach (var f in Files)
-                        {
-                            if (f.IsDefault)
-                            {
-                                g.Images.Add(f);
-                            }
-                        }
-                    }
-
+                    return NotFound();
                 }
+
+                
                 return Page();
             }
             else
@@ -208,7 +200,8 @@ namespace galerie.Pages
             {
                 foreach(var i in Gallery.Images)
                 {
-                    var fullName = Path.Combine(_environment.ContentRootPath, "Uploads", i.Id.ToString());
+                    var fullName = Path.Combine(_environment.ContentRootPath, "Uploads", i.Id.ToString().Replace("-", string.Empty));
+                    var dashes = Path.Combine(_environment.ContentRootPath, "Uploads", i.Id.ToString());
                     if (System.IO.File.Exists(fullName)) // existuje soubor na disku?
                     {
                         var fileRecord = _context.Files.Find(Guid.Parse(i.Id.ToString()));
@@ -216,6 +209,11 @@ namespace galerie.Pages
                         {
                             _context.Files.Remove(fileRecord);
                             System.IO.File.Delete(fullName);
+                            System.IO.File.Delete(fullName + ".chunkcomplete");
+                            System.IO.File.Delete(fullName + ".chunkstart");
+                            System.IO.File.Delete(fullName + ".metadata");
+                            System.IO.File.Delete(fullName + ".uploadlength");
+                            System.IO.File.Delete(dashes);
 
                         }
                         else

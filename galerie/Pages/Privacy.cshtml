@@ -14,11 +14,11 @@
             <div class="karta">
                    @if(g.Images.Count != 0)
                     {
-                        <img class="card-img-top" src="@Url.Page("/Privacy","Thumbnail",new {filename=g.Images[0].ThumbnailId })" alt="joe" draggable="false"/>
+                       <a asp-page="./Gallery" asp-route-galleryId="@g.GalleryId">  <img class="card-img-top" src="@Url.Page("/Index","Thumbnail",new {filename=g.Images[0].ThumbnailId })" alt="joe" draggable="false"/></a>
                     }
                     else
                     {
-                        <img class="card-img-top" src="https://source.unsplash.com/400x400" alt="joe" draggable="false"/>
+                         <a asp-page="./Gallery" asp-route-galleryId="@g.GalleryId"><img class="card-img-top" src="https://source.unsplash.com/400x400" alt="joe" draggable="false"/></a>
                     }
                         <div class="karta-body">
                         <p class="galleryTitle">@g.GalleryName</p>
@@ -64,7 +64,4 @@
 <div class="content-middle">
 <a asp-page="./Upload" asp-page-handler="NewGallery" ><button title="Add Gallery" class="buton add"><i class="fa fa-solid fa-plus"></i></button></a>   
     </div>
-
-
-
 

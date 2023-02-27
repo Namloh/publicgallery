@@ -2,4 +2,20 @@
 @model galerie.Pages.ImageModel
 @{
 }
-<img src="@Url.Page("/Image","File", new {id = Model.Input.Id })" />
+<style>
+    .image{
+        display: block;
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+       
+    }
+</style>
+
+<div class="hlava">
+<h1 class="PageHeader">@Model.Input.OriginalName</h1> 
+<a onclick="history.back()"><button title="Go back" class="buton delete"><i class="fa fa-solid fa-arrow-left"></i></button></a>
+</div>
+
+
+<img class="image" src="@Url.Page("/Image","File", new {id = Model.Input.Id })" alt="@Model.Input.OriginalName"/>

@@ -25,14 +25,11 @@ namespace galerie.Pages
         public void OnGet()
         {
             Galleries = _context.Galleries.AsNoTracking()
-                   .Include(i => i.Images).ThenInclude(u => u.Uploader)
+                   .Include(i => i.Images.Where(i => i.IsPublic == true).OrderByDescending(i => i.UploadedAt)).ThenInclude(u => u.Uploader)
                    .Include(u => u.User)
                    .Where(g => g.IsPublic == true)
                    .ToList();
-            if(Galleries.Count == 0)
-            {
-                ErrorMessage = "There are no public galleries.";
-            }
+            Galleries.Reverse();
         }
         public async Task<IActionResult> OnGetThumbnail(string filename, ThumbnailType type = ThumbnailType.Square)
         {

@@ -9,16 +9,18 @@
     }
 }
 
+<head >   <link rel="stylesheet" href="~/css/logins.css" asp-append-version="true" /></head>
+
 <h1>Manage your account</h1>
 
 <div>
     <h2>Change your account settings</h2>
     <hr />
-    <div class="row">
+    <div class="row regform">
         <div class="col-md-3">
             <partial name="_ManageNav" />
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9 boxes">
             @RenderBody()
         </div>
     </div>

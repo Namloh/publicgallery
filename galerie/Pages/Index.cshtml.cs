@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace galerie.Pages
 {
@@ -30,7 +31,6 @@ namespace galerie.Pages
         public void OnGet()
         {
             Files = _context.Files.AsNoTracking().Where(f => f.IsPublic).OrderByDescending(f => f.UploadedAt).Take(12).Include(f => f.Uploader).Include(f => f.Thumbnail).Include(g => g.Gallery).ToList();
-            ErrorMessage = null;
         }
         public async Task<IActionResult> OnGetThumbnail(string filename, ThumbnailType type = ThumbnailType.Square)
         {
@@ -39,15 +39,71 @@ namespace galerie.Pages
             .Where(f => f.Id == Guid.Parse(filename))
             .Include(f => f.Thumbnail)
             .SingleOrDefaultAsync();
+            if (User.Identity.IsAuthenticated)
+            {
+                if (file != null)
+                {
+                    if (!file.IsPublic)
+                    {
+                        if (file.IsDefault)
+                        {
+                            if (file.Thumbnail != null)
+                            {
+                                return File(file.Thumbnail.Blob, file.ContentType);
+                            }
+                            else
+                            {
+                                return NotFound("No thumbnail for this file");
+                            }
+                        }
+                        var userId = User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
+                        if (userId != file.UploaderId)
+                        {
+                            return RedirectToPage("/Account/AccessDenied", new { area = "Identity" });
+                        }
+                        else
+                        {
+                            if (file.Thumbnail != null)
+                            {
+                                return File(file.Thumbnail.Blob, file.ContentType);
+                            }
+                            else
+                            {
+                                return NotFound("No thumbnail for this file");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (file.Thumbnail != null)
+                        {
+                            return File(file.Thumbnail.Blob, file.ContentType);
+                        }
+                        else
+                        {
+                            return NotFound("No thumbnail for this file");
+                        }
+                    }
+                }
+            }
+
             if (file != null)
             {
-                if (file.Thumbnail != null)
+                if (file.IsPublic)
                 {
-                    return File(file.Thumbnail.Blob, file.ContentType);
+                    if (file.Thumbnail != null)
+                    {
+                        return File(file.Thumbnail.Blob, file.ContentType);
+                    }
+                    return NotFound("No thumbnail for this file");
                 }
-                return NotFound("no thumbnail for this file");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-            return NotFound("no record for this file");
+            else
+            {
+                return NotFound("No record for this file");
+            }
+           
         }
         public IActionResult OnGetDownload(string filename)
         {

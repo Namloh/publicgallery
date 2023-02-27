@@ -20,13 +20,27 @@
     
   <DIV id="dropzone">
     <FORM method="post" class="dropzone needsclick" id="demo-upload" enctype="multipart/form-data">
+         <input type="hidden" asp-for="UserId" id="UserId" />
          <label id="input-text" asp-for="Upload" class="control-label">Click here to upload an image!</label>
               <input type="file" asp-for="Upload" id="file" class="upload-button" required />
-               <div class="form-check" >
-                @Html.CheckBoxFor(x => x.CheckedDeafault)
-  <label class="form-check-label" for="flexCheckDeafault" name="CheckedDeafault" asp-for="CheckedDeafault">
-    <strong>Default image (ADMIN ONLY)</strong>
-  </label>
+             
+               <div style="display: flex; flex-direction: column; text-align:center;">
+            <label for="FileDescription">Description of your image</label>
+            <input id="Description" type="text" name="FileDescription" value="" asp-for="FileDescription" required/>
+          </div>
+              <div class="form-check" >
+                @if(Model.IsAdmin)
+                {
+                      <label class="form-check-label" for="flexCheckDeafault" name="CheckedDeafault" asp-for="CheckedDeafault">
+                          <input id="default" type="checkbox"  asp-for="CheckedDeafault" value="false">
+                        <strong>Default image (ADMIN ONLY)</strong>
+                        </label>
+                    }
+                    else
+                    {
+                         <input id="default" type="hidden"  asp-for="CheckedDeafault" value="false">
+                    }
+                
   <div class="form-group">
   <button title="Upload image" id="inputbtn" class="buton download"><i class="fa fa-solid fa-upload"></i><input id="upinput" type="submit" value="Upload" /></button>
  </div>
@@ -35,9 +49,7 @@
   </DIV>
    </div>
     
- 
 
-    
 }
 else
 {
@@ -63,3 +75,10 @@ else
       </form>
       </div>
 }
+
+
+
+ <script type="module" src="~/js/tus.min.js"></script>
+
+
+ <script type="module" src="~/js/upload.js" asp-append-version="true"></script>

@@ -19,9 +19,10 @@ namespace galerie.Models
         public string OriginalName { get; set; } // původní název souboru
         [Required]
         public string ContentType { get; set; } // druh obsahu v souboru (MIME type)
+        public string Description { get; set; }
         public bool IsDefault { get; set; } // je stock?
         public bool IsPublic { get; set; } // je verejny?
-        public DateTime ExifDateTaken { get; set; } 
+        public DateTime ExifDateTaken { get; set; }
         public ThumbnailBlob Thumbnail { get; set; }
         public Guid? ThumbnailId { get; set; }
         public int? GalleryId { get; set; }

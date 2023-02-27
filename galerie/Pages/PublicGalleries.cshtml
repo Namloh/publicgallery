@@ -2,7 +2,16 @@
 @model galerie.Pages.PublicGalleriesModel
 @{
 }
-<h1 class="PageHeader">List of All Public Galleries from All Users</h1>
+
+@if(Model.Galleries.Count == 0)
+{
+    <div class="alert alert-danger">There are no public galleries</div>
+}
+else
+{
+    <h1 class="PageHeader">List of All Public Galleries from All Users</h1>
+}
+
 
  <div class="galleryflex">
 @if (Model.Galleries.Count > 0)
@@ -14,7 +23,7 @@
             <div class="karta">
                    @if(g.Images.Count != 0)
                     {
-                        <img class="card-img-top" src="@Url.Page("/Privacy","Thumbnail",new {filename=g.Images[0].ThumbnailId })" alt="joe" draggable="false"/>
+                        <a asp-page="./Gallery" asp-route-galleryId="@g.GalleryId" asp-page-handler="Public"> <img class="card-img-top" src="@Url.Page("/Index","Thumbnail",new {filename=g.Images[0].ThumbnailId })" alt="joe" draggable="false"/></a>
                     }
                     else
                     {
@@ -22,6 +31,7 @@
                     }
                         <div class="karta-body">
                         <p class="galleryTitle">@g.GalleryName</p>
+                         <p>Owner: @g.User.UserName</p>
                     @if (g.IsPublic)
                     {
                         <p>Status: Public</p>
@@ -38,7 +48,7 @@
                     else
                     {
                          <p>Number of images: 0</p>
-                         <p>Last updated: never... </p>
+                         <p>Last updated: <i>never...</i>  </p>
                     }
 
                  <a asp-page="./Gallery" asp-route-galleryId="@g.GalleryId" asp-page-handler="Public"><button title="Open" class="buton open"><i class="fa fa-folder"></i></button></a>

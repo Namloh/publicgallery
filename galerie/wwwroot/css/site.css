@@ -11,6 +11,7 @@ html {
 html {
   position: relative;
   min-height: 100%;
+  max-width: 100vw;
   color:white;
 }
 
@@ -18,31 +19,44 @@ body {
   margin-bottom: 60px;
 
 }
+
 .alert{
     text-align: center;
     font-size: 1.2em;
     max-width: 50%;
     margin-left: 50%;
     transform: translate(-50%);
+    margin-top: 20px;
 }
 #title {
     font-size: 3em;
     text-decoration: none;
     color: white;
     font-weight: 600;
+    margin-left: 30px;
 }
-.PageHeader{
+
+.PageHeader {
     text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
 }
+
 .login-partial {
     margin-left: 50px;
     flex-direction: row;
 }
+
 .kok {
     text-decoration: none;
     color: white;
     font-size: 1.1em;
     font-weight: 600;
+}
+
+.logout {
+    margin-left: 50%;
+    transform: translate(-50%);
 }
 
 html body {
@@ -51,38 +65,45 @@ html body {
 
 .headerus {
     background-color: rgb(20, 18, 26);
-
+    border-bottom: 1px solid #aaa;
 }
+
 
 .navbarus {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     height: fit-content;
     padding: 20px 0px;
-    justify-content: space-between;
+    justify-content: space-around;
+    text-align: center;
+    max-width: 100%;
 }
 
 .navigace {
     display: flex;
     flex-wrap: nowrap;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     list-style-type: none;
     margin: 0;
-    font-size: 1.1em;
+    font-size: 1.1rem;
     font-weight: 500;
+    text-align: center;
     color: white;
+    padding: 0;
+    row-gap: 15px;
 }
 
-.navigace li {
-    margin: auto 40px;
-}
+    .navigace li {
+        margin: auto 15px;
+    }
 
-.nav-item:last-child {
-    margin-right: 0px;
+.gals {
+    display: flex;
+    flex-direction: row;
+    font-size: 1.1em;
 }
-
 
 #hero {
     display: block;
@@ -90,6 +111,11 @@ html body {
     padding: 5%;
 }
 
+
+
+.list {
+    list-style: none;
+}
 .main-text {
     font-size: 3em;
     font-weight: 900;
@@ -100,9 +126,10 @@ html body {
 }
 
 .top-12 {
-    margin-left: 15%;
+    
     margin-bottom: 3rem;
     margin-top: 3rem;
+    text-align: center;
 }
 
 .galleryflex {
@@ -194,6 +221,7 @@ html body {
     justify-content: center;
     align-items: center;
     margin-bottom: 30px;
+    margin-top: 20px;
 }
 .hlava a button{
     margin-left: 20px;
@@ -290,118 +318,56 @@ html body {
 .upload-button:hover{
     cursor: pointer;
 }
-@media only screen and (max-width: 800px) {
-    .galleryflex {
-        flex-direction: column;
-        align-items: center;
-    }
 
-    .galitem {
-        max-width: 80%;
-    }
+.footer div{
+    width: 50%;
+    margin-left: 50%;
+    transform: translate(-50%);
+    text-align: center;
 }
 
 
 
 
 
+    @media only screen and (max-width: 800px) {
 
-
-
-
-
-
-
-
-
-
-
-
-/*OLD CSS----------------------*/
-.gallery-container {
-    display: flex;
-    width: 100%;
-    padding: 4% 2%;
-    box-sizing: border-box;
-    height: 100vh;
-}
-
-.box {
-    flex: 1;
-    overflow: hidden;
-    transition: .5s;
-    margin: 0 2%;
-    box-shadow: 0 20px 30px rgba(0,0,0,.1);
-    line-height: 0;
-}
-
-    .box > img {
-        width: 200%;
-        height: calc(100% - 10vh);
-        object-fit: cover;
-        transition: .5s;
-    }
-
-    .box > span {
-        font-size: 3.8vh;
-        display: block;
-        text-align: center;
-        height: 10vh;
-        line-height: 2.6;
-    }
-
-    .box:hover {
-        flex: 1 1 50%;
-    }
-
-        .box:hover > img {
-            width: 100%;
-            height: 100%;
+        .galleryflex {
+            flex-direction: column;
+            align-items: center;
         }
 
+        .galitem {
+            max-width: 80%;
+        }
+
+        #title {
+            margin-left: 0;
+        }
+    }
+
+    @media only screen and (min-width: 800px) {
+
+        .navigace {
+            flex-direction: row;
+        }
+
+        .navbarus {
+            flex-direction: row;
+        }
+    }
 
 
-.inside {
-    background-color: #fff;
-}
 
-.divRec {
-    cursor: move;
-    padding: 35px 20px;
-    font-size: 20px;
-    background-color: #ff0000;
-    grid-area: span 1/span 2;
-}
-
-.divQuad {
-    cursor: move;
-    padding: 35px 20px;
-    font-size: 20px;
-    background-color: #fff333;
-    grid-area: span 1/span 1;
-}
-
-.divCard {
-    cursor: move;
-    padding: 35px 20px;
-    font-size: 20px;
-    background-color: #00ff00;
-    grid-area: span 2/span 1;
-    min-height: 250px;
-}
 
 .ghost {
-    border: 1px dashed #000;
-    background-color: #fff;
-    opacity:0.1;
+    background-color: rgba(255, 255, 255, 0.664);
 }
 
 .custom-drag-ghost {
-    /* The original cloned element must not take place up in the page and must not be visible */
     position: absolute;
     top: -99999px;
     left: -99999px;
-    /* Just for appearance */
     background-color: #edb458;
     border: 1px solid #e8871e;
 }
@@ -415,26 +381,4 @@ html body {
     top: 0;
 }
 
-
-
-.containerus {
-    background-color: #333;
-    padding: 1rem;
-    margin-top: 1rem;
-    display: grid;
-    grid-gap: 15px;
-    grid-template-rows: repeat(auto, 250px);
-    grid-template-columns: repeat(4, 1fr);
-}
-
-.draggable {
-    padding: 1rem;
-    background-color: white;
-    border: 1px solid black;
-    cursor: move;
-}
-
-    .draggable.dragging {
-        opacity: .5;
-    }
 
